@@ -1,45 +1,79 @@
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-theme="bumblebee">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- css -->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-    <title>To Do List</title>
+    <!--Icons-->
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" type="image/x-icon" href="to_do.png">
+
+    <title>Todolist</title>
 </head>
 
 <body>
-    <div class="container"><!-- Todo list body -->
-        <div class="todo-box">
-            <header class="heading">To Do List</header>
-            <div class="inputbox">
-                <i class="icon uil uil-file-check-alt"></i><!-- file icon  -->
-                <input type="text" placeholder="Type your To Do List">
-                <i id="addbutton" class="icon uil uil-plus"></i><!-- Add (plus) icon  -->
+
+    <!-- main todo container -->
+    <div class="container">
+        <!-- header that has input and add button -->
+        <header>
+            <h1>Todo List</h1>
+
+            <div class="input-section">
+                <input id="todo-input" type="text" placeholder="📑 Add your todo here.."
+                    class="input w-full max-w-xs" />
+                <button id="add-button" class="btn btn-add ">
+                    <i class="bx bx-plus bx-sm"></i>
+                </button>
             </div>
-            <div class="clckbutton">
-                <span class=" btn clearall">Clear all task</span>
-                <span class=" btn clearcomtask">Clear Complete</span>
-            </div>
-            <hr>
-            <ul class="itemlist"></ul><!-- Empty Unorder Todolist for add list item -->
-            <hr>
-            <div class="clckbutton">
-                <span>
-                    <span class="pendingTasks"></span><!--Empty span for task count -->
-                    tasks left</span>
-                <div>
-                    <span class="pendingTasks" >All</span>
-                    <span class=" btn complete">Complete</span>
-                    <span class=" btn uncomplete">Uncomplete</span>
+        </header>
+
+        <!-- delete buttons -->
+
+        <div class="todos-filter">
+
+            <button id="delete-selected" class="btn btn-ghost delete-selected-btn">
+                Delete Selected
+            </button>
+            <button id="delete-all" class="btn btn-ghost delete-all-btn">
+                Delete All
+            </button>
+        </div>
+
+
+        <!-- this is the dynamic content which dds ups all the todos -->
+        <ul id="all-todos" class="todos-list">
+
+        </ul>
+
+
+        <!-- dropdown throgh which we can apply filters -->
+        <div class="filters">
+            <div class="dropdown">
+                <button class="dropbtn">Filter</button>
+                <div class="dropdown-content">
+                    <a href="#" id="all">All</a>
+                    <a href="#" id="rem">Pending</a>
+                    <a href="#" id="com">Completed</a>
                 </div>
+            </div>
+
+            <!-- value showing completed task and all -->
+            <div class="completed-task">
+                <p>Completed: <span id="c-count">0</span></p>
+            </div>
+            <div class="remaining-task">
+                <p>Total Tasks: <span id="r-count">0</span></p>
             </div>
         </div>
     </div>
 
+    <!-- JS -->
     <script src="script.js"></script>
+
 </body>
 
 </html>

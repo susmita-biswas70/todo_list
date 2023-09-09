@@ -1,96 +1,168 @@
+var todoList = []
+var comdoList = [];
+var remList = [];
+var addButton = document.getElementById("add-button")
+var todoInput = document.getElementById("todo-input")
+var deleteAllButton = document.getElementById("delete-all")
+var allTodos = document.getElementById("all-todos");
+var deleteSButton = document.getElementById("delete-selected")
 
 
-const inputbox = document.querySelector(".inputbox input");
-const add = document.querySelector("#addbutton");
-const todolist = document.querySelector(".itemlist");
-const pendingTasks = document.querySelector(".pendingTasks");
-const clearall = document.querySelector(".clearall");
+//event listners for add and delete
+addButton.addEventListener("click", add)
+deleteAllButton.addEventListener("click", deleteAll)
+deleteSButton.addEventListener("click", deleteS)
 
-// onkeyup event for hide and unhide Add button
-inputbox.onkeyup = () => {
-    let UserEnterValue = inputbox.value;//Store user entered value
-    if (UserEnterValue.trim() != 0) {//if the user value isn't only spaces
-        add.style.display = "block"; //add button show
+
+//event listeners for filtersk
+document.addEventListener('click', (e) => {
+    if (e.target.className.split(' ')[0] == 'complete' || e.target.className.split(' ')[0] == 'ci') {
+        completeTodo(e);
     }
-    else {
-        add.style.display = "none";//add button hide
+    if (e.target.className.split(' ')[0] == 'delete' || e.target.className.split(' ')[0] == 'di') {
+        deleteTodo(e)
     }
+    if (e.target.id == "all") {
+        viewAll();
+    }
+    if (e.target.id == "rem") {
+        viewRemaining();
+    }
+    if (e.target.id == "com") {
+        viewCompleted();
+    }
+
+})
+//event listner for enter key
+todoInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        add();
+    }
+});
+
+
+//updates the all the remaining, completed and main list
+function update() {
+    comdoList = todoList.filter((ele) => {
+        return ele.complete
+
+    })
+    remList = todoList.filter((ele) => {
+        return !ele.complete
+    })
+    document.getElementById("r-count").innerText = todoList.length.toString();
+    document.getElementById("c-count").innerText = comdoList.length.toString();
+
 }
 
-var item = [];
-// Onclick Event is used to add task in array
-add.onclick = () => {
-    item.push(inputbox.value)//Item Add In Array
-    showcase(); // showcase call for add li tag in html etc.
+//adds the task in main list
+
+function add() {
+    var value = todoInput.value;
+    if (value === '') {
+        alert("😮 Task cannot be empty")
+        return;
+    }
+    todoList.push({
+        task: value,
+        id: Date.now().toString(),
+        complete: false,
+    });
+
+    todoInput.value = "";
+    update();
+    addinmain(todoList);
 }
 
-// Showcase function display all the added task
-function showcase() {
-    let ListTag = "";
-    item.forEach((element, index) => {
-        ListTag += `<li>
-                         <label class="box">
-                            <input class="checkinput" type="checkbox">
-                                <span class="checkmark"></span>${element}
-                        </label>
-                        <span class="icon">
-                            <i class=" del uil uil-plus-circle" onclick="deleteTask(${index})"></i>
-                        <span>
-                    </li>`;
-                });
-    todolist.innerHTML = ListTag; //adding new li tag inside ul tag
-    inputbox.value = ""; //once task added the input field blank
-    add.style.display = "none";//Add button hide
-    pendingTasks.textContent = item.length;//For toal left task counting
+
+//renders the main list and views on the main content
+
+function addinmain(todoList) {
+    allTodos.innerHTML = ""
+    todoList.forEach(element => {
+        var x = `<li id=${element.id} class="todo-item">
+    <p id="task"> ${element.complete ? `<strike>${element.task}</strike>` : element.task} </p>
+    <div class="todo-actions">
+                <button class="complete btn btn-success">
+                    <i class=" ci bx bx-check bx-sm"></i>
+                </button>
+
+                <button class="delete btn btn-error" >
+                    <i class="di bx bx-trash bx-sm"></i>
+                </button>
+            </div>
+        </li>`
+        allTodos.innerHTML += x
+    });
 }
 
-// Delete task function is used to remove the task from the list
-function deleteTask(index) {
-    item.splice(index, 1);//remove element from array
-    showcase();
+
+//deletes and indiviual task and update all the list
+function deleteTodo(e) {
+    var deleted = e.target.parentElement.parentElement.getAttribute('id');
+    todoList = todoList.filter((ele) => {
+        return ele.id != deleted
+    })
+
+    update();
+    addinmain(todoList);
+
 }
-// delete all tasks function is used for delete all task from your list
-clearall.onclick = () => {
-    item = []; //empty the array
-    showcase();
-}
-// Clear Completed is used for which task complete delete from list.
-document.querySelector('.clearcomtask').onclick = () => {
-    var inputElems = document.querySelectorAll(".checkinput"); // Select selected task in list
-    var temp = [] // cretae  new arr for store completed task
-    for (var i = 0; i < item.length; i++) {
-        if (inputElems[i].checked === true) {
-            temp.push(item[i]);
+
+//completes indiviaula task and updates all the list
+function completeTodo(e) {
+    var completed = e.target.parentElement.parentElement.getAttribute('id');
+    todoList.forEach((obj) => {
+        if (obj.id == completed) {
+            if (obj.complete == false) {
+                obj.complete = true
+                e.target.parentElement.parentElement.querySelector("#task").classList.add("line");
+            } else {
+                obj.complete = false
+
+                e.target.parentElement.parentElement.querySelector("#task").classList.remove("line");
+            }
         }
-    }
-    var j = 0;
-    for (i = 0; i < item.length; i++) {
-        if (item[i] === temp[j]) {
-            item.splice(i, 1);//if task store in temp array than remove from item array
-            j++;
-            i--;//Array.length -1 because 1 element splice than i-- use for back
-        }
-    }
-    showcase();
+    })
+
+    update();
+    addinmain(todoList);
 }
 
-// Complete all task is used for completer all task
-document.querySelector('.complete').onclick = () => {
-    checked(true);
+
+//deletes all the tasks
+function deleteAll(todo) {
+
+    todoList = []
+
+    update();
+    addinmain(todoList);
+
 }
-//Uncomplete all task is used for uncompleter all task
-document.querySelector('.uncomplete').onclick = () => {
-    checked(false);
+
+//deletes only completed task
+function deleteS(todo) {
+
+    todoList = todoList.filter((ele) => {
+        return !ele.complete;
+    })
+
+
+    update();
+    addinmain(todoList);
+
 }
-//Checked funtion is used to checked and unchecked task
-function checked(params) {
-    var inputElems = document.querySelectorAll(".checkinput"); // Select selected task in list
-    for (var i = 0; i < item.length; i++) {
-        if (params == true) {
-            inputElems[i].checked = true;
-        }
-        else {
-            inputElems[i].checked = false;
-        }
-    }
+
+
+// functions for filters
+function viewCompleted() {
+    addinmain(comdoList);
+}
+
+function viewRemaining() {
+
+    addinmain(remList);
+}
+function viewAll() {
+    addinmain(todoList);
 }
