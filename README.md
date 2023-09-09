@@ -1,6 +1,6 @@
 # todo_list
 
-You can see the website live at: https://susmita-biswas70.github.io/todo_list/
+You can see the website live at: 
 
 ABOUT THIS PROJECT-:
 In this project i have created a simple to-do app using HTML CSS and JavaScript.
